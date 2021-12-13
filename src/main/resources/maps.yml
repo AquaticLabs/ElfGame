@@ -1,0 +1,19 @@
+Maps:
+  BOMB_TAG:
+#    default:
+#      lobby-loc: "world:10:10:10"
+#      spec-loc: "world:10:10:10"
+#      selection:
+#        world: "world"
+#        bound1: "10:10:10"
+#        bound2: "10:10:10"
+#      spawns:
+#        - "world:10:10:10"
+
+  BATTLE_ROYALE:
+
+  SPLEEF:
+
+  SANTAS_WORKSHOP:
+
+  GIFT_PVP:

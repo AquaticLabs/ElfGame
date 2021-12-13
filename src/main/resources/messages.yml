@@ -1,0 +1,13 @@
+Messages:
+  no-permission: ""
+  invalid-player: ""
+  help:
+    - ""
+    - ""
+
+
+Games:
+  Spleef:
+    starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
+    starting: ""
+    finish: ""

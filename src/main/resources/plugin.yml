@@ -1,0 +1,9 @@
+name: ElfRoyale
+version: ${project.version}
+main: com.aquaticlabsdev.elfgame.ElfPlugin
+api-version: 1.17
+commands:
+  elfroyal:
+    usage: /command
+    description: Main Plugin command.
+    aliases: [er]
