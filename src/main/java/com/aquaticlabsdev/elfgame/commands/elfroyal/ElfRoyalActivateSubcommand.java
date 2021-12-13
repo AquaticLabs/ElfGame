@@ -6,6 +6,7 @@ import com.aquaticlabsdev.elfgame.game.GameFactory;
 import com.aquaticlabsdev.elfgame.game.GameType;
 import com.aquaticlabsdev.elfgame.util.Permission;
 import com.aquaticlabsdev.elfgame.util.Utils;
+import com.aquaticlabsdev.elfgame.util.file.MessageFile;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -51,6 +52,12 @@ public class ElfRoyalActivateSubcommand implements Subcommand {
         GameType type = GameType.valueOf(gameType);
 
         plugin.getGameHandler().activateGame(GameFactory.createGame(plugin, type, mapName));
+        MessageFile messageFile = plugin.getFileUtil().getMessageFile();
+
+        List<String> activatedMessage = messageFile.getGameActivatedMessage(plugin.getGameHandler().getActiveGame().type());
+        for (String s : activatedMessage) {
+            player.sendMessage(s.replace("%prefix%", messageFile.getBombTagPrefix()));
+        }
         return true;
     }
 

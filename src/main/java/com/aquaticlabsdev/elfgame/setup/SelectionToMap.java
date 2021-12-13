@@ -44,20 +44,25 @@ public class SelectionToMap {
                     if (selection.getWorld().getBlockAt(x, y, z).getState() instanceof Sign) {
                         Sign sign = (Sign) selection.getWorld().getBlockAt(x, y, z).getState();
                         org.bukkit.block.data.type.Sign signX = (org.bukkit.block.data.type.Sign) sign.getBlockData();
-                        System.out.println(signX.getRotation().name());
+                       // System.out.println(signX.getRotation().name());
 
                         if (sign.getLine(0).equalsIgnoreCase("spectator_spawn")) {
                             Location location = sign.getLocation();
                             location.setYaw(Utils.faceToYaw(signX.getRotation()));
                             map.setSpectatorSpawn(location);
-                            System.out.println("added spectatorspawn");
+                         //   System.out.println("added spectatorspawn");
                         }
 
                         if (sign.getLine(0).equalsIgnoreCase("player_spawn")) {
                             Location location = sign.getLocation();
                             location.setYaw(Utils.faceToYaw(signX.getRotation()));
                             map.addPlayerSpawn(location);
-                            System.out.println("added playerspawn");
+                        //    System.out.println("added playerspawn");
+                        }
+                        if (sign.getLine(0).equalsIgnoreCase("lobby_spawn")) {
+                            Location location = sign.getLocation();
+                            location.setYaw(Utils.faceToYaw(signX.getRotation()));
+                            map.setLobbyLocation(location);
                         }
 
 

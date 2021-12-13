@@ -35,6 +35,7 @@ public class PeppermintMap implements GameMap {
     private final String mapName;
     private final GameType gameType = GameType.BOMB_TAG;
     private Selection selection;
+
     @Getter
     private List<Location> playerSpawns = new ArrayList<>();
     @Getter

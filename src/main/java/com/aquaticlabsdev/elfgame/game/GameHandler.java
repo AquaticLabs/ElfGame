@@ -6,6 +6,7 @@ import com.aquaticlabsdev.elfgame.util.file.ConfigFile;
 import com.aquaticlabsdev.elfroyal.game.ElfGame;
 import com.aquaticlabsdev.elfroyal.game.GameState;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -33,26 +34,7 @@ public class GameHandler {
 
     public GameHandler(ElfPlugin plugin) {
         this.plugin = plugin;
-        ConfigFile configFile = plugin.getFileUtil().getConfigFile();
-
-        String lobbySpawn = configFile.getMainLobbyLocation();
-        if (lobbySpawn == null) {
-            System.out.println("You must setup a Main Lobby Location");
-            return;
-        }
-
-        String[] splitStr = lobbySpawn.trim().split(":");
-        World world = Bukkit.getWorld(splitStr[0]);
-        double x = Double.parseDouble(splitStr[1]);
-        double y = Double.parseDouble(splitStr[2]);
-        double z = Double.parseDouble(splitStr[3]);
-        float yaw = Float.parseFloat(splitStr[4]);
-        float pitch = Float.parseFloat(splitStr[5]);
-
-        Location lobbyLoc = new Location(world, x, y, z);
-        lobbyLoc.setYaw(yaw);
-        lobbyLoc.setPitch(pitch);
-        this.mainLobbyLoc = lobbyLoc;
+        loadMainLobbyLoc();
     }
 
 
@@ -99,6 +81,38 @@ public class GameHandler {
         availablePlayersToPlay.remove(data.getUuid());
         spectators.putIfAbsent(data.getUuid(), data);
     }
+
+    public void setMainLobbyLoc(Location location) {
+        ConfigFile file = plugin.getFileUtil().getConfigFile();
+        file.getConfig().set("Settings.mainLobbyLocation",
+                location.getWorld().getName()
+                        + ":" + location.getX()
+                        + ":" + location.getY()
+                        + ":" + location.getZ()
+                        + ":" + location.getYaw()
+                        + ":" + location.getPitch());
+        file.save();
+    }
+
+    public void loadMainLobbyLoc() {
+        ConfigFile file = plugin.getFileUtil().getConfigFile();
+        String lobbyLocStr = file.getConfig().getString("Settings.mainLobbyLocation");
+        if (lobbyLocStr != null) {
+            String[] splitStr = lobbyLocStr.trim().split(":");
+            World world = Bukkit.getWorld(splitStr[0]);
+            double x = Double.parseDouble(splitStr[1]);
+            double y = Double.parseDouble(splitStr[2]);
+            double z = Double.parseDouble(splitStr[3]);
+            float yaw = Float.parseFloat(splitStr[4]);
+            float pitch = Float.parseFloat(splitStr[5]);
+
+            Location lobbyLoc = new Location(world, x, y, z);
+            lobbyLoc.setYaw(yaw);
+            lobbyLoc.setPitch(pitch);
+            this.mainLobbyLoc = lobbyLoc;
+        }
+    }
+
 
 
 }

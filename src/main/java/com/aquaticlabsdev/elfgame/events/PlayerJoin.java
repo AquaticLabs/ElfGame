@@ -28,6 +28,11 @@ public class PlayerJoin implements Listener {
         playerData.setName(player.getName());
         playerData.save();
         plugin.getGameHandler().addToGamePlayers(playerData);
+
+        if (plugin.getGameHandler().getMainLobbyLoc() != null) {
+            player.teleport(plugin.getGameHandler().getMainLobbyLoc());
+        }
+
     }
 
 }

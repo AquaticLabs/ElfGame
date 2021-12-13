@@ -1,6 +1,7 @@
 package com.aquaticlabsdev.elfgame.util.file;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
+import com.aquaticlabsdev.elfgame.util.Utils;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -28,6 +29,11 @@ public class ConfigFile {
         this.config = config;
 
         this.mainLobbyLocation = config.getString("Settings.mainLobbyLocation");
+    }
+
+
+    public void save() {
+        Utils.saveFile(configFile, config);
     }
 
 }

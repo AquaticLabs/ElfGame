@@ -4,10 +4,53 @@ Messages:
   help:
     - ""
     - ""
-
+  base-prefix: "&8[&cElf&3Royale&8]"
 
 Games:
-  Spleef:
+  SPLEEF:
+    starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
+    starting: ""
+    finish: ""
+  BATTLE_ROYALE:
+    starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
+    starting: ""
+    finish: ""
+  SANTAS_WORKSHOP:
+    starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
+    starting: ""
+    finish: ""
+  BOMB_TAG:
+    prefix: "&8[&cBomb&4Tag&8]"
+    activated:
+      - "&7---------------------------"
+      - "&cBomb Tag Activated. "
+      - "&7Run /er activate bomb_tag"
+      - "&7to start the game."
+      - "&7---------------------------"
+    start: "%prefix% &7cBomb Tag Started."
+    force-start: "%prefix% &7cBomb Tag Forcefully Started."
+    start-countdown: "%prefix% Bomb-Tag &7is starting in %seconds% seconds"
+    started: "%prefix% Bomb Tag Started!"
+    first-pick: "%prefix% &6%player_name% &cis the first victim!"
+    tagged: "%prefix% &6%player_name% &chas been Tagged!!"
+    tagged-player: "%prefix% &cYou have been tagged."
+    tag-countdown: "%prefix% &6%player_name% &cexplodes in &f%seconds% &cseconds!"
+    announce-player-explode: "%prefix% &c%player_name% has exploded!"
+    player-died: "%prefix% &cYou have been eliminated! You came in %placement%"
+    winners:
+      - "&7---------------------------"
+      - "&c&l   Game has Ended "
+      - "&6     The winners are: "
+      - "&6   1st: %1st% &2(3 cookies)"
+      - "&6   2nd: %2nd% &2(2 cookies)"
+      - "&6   3rd: %3rd% &2(1 cookies)"
+      - "&7---------------------------"
+
+
+
+
+
+  GIFT_PVP:
     starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
     starting: ""
     finish: ""

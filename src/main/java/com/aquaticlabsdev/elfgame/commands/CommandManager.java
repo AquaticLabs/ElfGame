@@ -104,6 +104,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
             }
         }
+        if (subcommand == null) {
+            return new ArrayList<>();
+        }
 
         return subcommand.onTabComplete(sender, cmd, args);
     }

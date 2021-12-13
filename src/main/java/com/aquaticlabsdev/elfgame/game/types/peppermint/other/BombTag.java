@@ -3,6 +3,7 @@ package com.aquaticlabsdev.elfgame.game.types.peppermint.other;
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.game.types.peppermint.PeppermintGame;
 
+import com.aquaticlabsdev.elfgame.util.file.MessageFile;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -53,16 +54,27 @@ public class BombTag {
             return;
         }
         Player player = Bukkit.getPlayer(taggedPlayer);
-
-        System.out.println("Player: " + player.getName() + " tagged");
-
+        MessageFile messageFile = plugin.getFileUtil().getMessageFile();
+        game.broadcastGameMessage(messageFile.getBombTagTaggedAnnounce().replace("%player_name%", player.getName()).replace("%prefix%", messageFile.getBombTagPrefix()));
+        player.sendMessage(messageFile.getBombTagTaggedPlayer().replace("%prefix%", messageFile.getBombTagPrefix()));
         this.taskID = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if (time == 0) {
-                game.killPlayer(player);
                 cancel();
+                game.killPlayer(player);
                 return;
             }
-            player.sendMessage("You have " + time + " seconds till you explode!");
+            if (time % 10 == 0 && time > 4) {
+                game.broadcastGameMessage(messageFile.getBombTagBombCountdown()
+                        .replace("%seconds%", time + "")
+                        .replace("%prefix%", messageFile.getBombTagPrefix())
+                        .replace("%player_name%", player.getName()));
+            }
+            if (time <= 5) {
+                game.broadcastGameMessage(messageFile.getBombTagBombCountdown()
+                        .replace("%seconds%", time + "")
+                        .replace("%prefix%", messageFile.getBombTagPrefix())
+                        .replace("%player_name%", player.getName()));
+            }
             time--;
         }, 0, 20);
 

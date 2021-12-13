@@ -6,19 +6,18 @@ import com.aquaticlabsdev.elfgame.game.ElfTimer;
 import com.aquaticlabsdev.elfgame.game.GameType;
 import com.aquaticlabsdev.elfgame.game.types.peppermint.other.BombTag;
 import com.aquaticlabsdev.elfgame.game.types.peppermint.other.PeppermintMap;
+import com.aquaticlabsdev.elfgame.util.file.MessageFile;
 import com.aquaticlabsdev.elfroyal.game.ElfGame;
+import com.aquaticlabsdev.elfroyal.game.GamePlacements;
 import com.aquaticlabsdev.elfroyal.game.GameState;
 import com.aquaticlabsdev.elfroyal.loc.LocationType;
 import com.aquaticlabsdev.elfroyal.timer.GameTimer;
-import com.aquaticlabsdev.elfroyal.timer.ObjectTimer;
 import com.aquaticlabsdev.elfroyal.timer.TimeTickType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +35,16 @@ public class PeppermintGame extends ElfGame {
     private GameTimer preGameTimer;
     private GameTimer postGameTimer;
     private final GameType type = GameType.BOMB_TAG;
+    @Getter
+    private boolean activated;
     @Setter
     private PeppermintMap map;
-
     @Getter
     private BombTag bombTag;
+    @Getter
+    private GamePlacements placements = new GamePlacements();
 
-    private List<UUID> alivePlayers = new ArrayList<>();;
-
+    private List<UUID> alivePlayers = new ArrayList<>();
 
 
     public PeppermintGame(ElfPlugin plugin, String id) {
@@ -60,27 +61,30 @@ public class PeppermintGame extends ElfGame {
         for (Map.Entry<UUID, PlayerData> entry : plugin.getGameHandler().getAvailablePlayersToPlay().entrySet()) {
             Player p = Bukkit.getPlayer(entry.getKey());
 
-            if (p == null || !p.isOnline())  {
+            if (p == null || !p.isOnline()) {
                 return;
             }
             getPlayersToPlay().putIfAbsent(entry.getKey(), p);
         }
 
-        bombTag = new BombTag(plugin,this, 25);
+        bombTag = new BombTag(plugin, this, 25);
         if (map == null) {
             System.out.println("Cant Start game. Picked Map Failed to load, or doesn't exist..");
             return;
         }
-        teleportPlayers();
-        startPregameCountdown();
+        teleportPlayersToGameLobby();
     }
 
 
     @Override
     public void startPregameCountdown() {
         setState(GameState.PREGAME);
-        preGameTimer = new ElfTimer(plugin, this::start, 10, TimeTickType.DOWN);
+        preGameTimer = new ElfTimer(plugin, () -> {
+            teleportPlayersToGame();
+            start();
+        }, 10, TimeTickType.DOWN, false);
         preGameTimer.start();
+
         System.out.println("Game: " + getGameID() + " starting in " + preGameTimer.getTime() + " seconds");
         alivePlayers.addAll(getPlayersToPlay().keySet());
     }
@@ -94,22 +98,61 @@ public class PeppermintGame extends ElfGame {
     }
 
     @Override
+    public String type() {
+        return type.name();
+    }
+
+    @Override
     public void stop() {
         if (preGameTimer != null)
-        preGameTimer.stop();
+            preGameTimer.stop();
     }
 
     @Override
     public void finish() {
         setState(GameState.POSTGAME);
+        List<String> winMessage = plugin.getFileUtil().getMessageFile().getBombTagWinners();
+        for (String s : winMessage) {
+            UUID uuid1 = getPlacements().getByPlacement(1);
+            UUID uuid2 = getPlacements().getByPlacement(2);
+            UUID uuid3 = getPlacements().getByPlacement(3);
+            String player1 = uuid1 != null ? Bukkit.getOfflinePlayer(uuid1).getName() : "";
+            String player2 = uuid2 != null ? Bukkit.getOfflinePlayer(uuid2).getName() : "";
+            String player3 = uuid3 != null ? Bukkit.getOfflinePlayer(uuid3).getName() : "";
+
+
+            broadcastGameMessage(s
+                    .replace("%1st%", player1)
+                    .replace("%2nd%", player2)
+                    .replace("%3rd%", player3)
+
+
+            );
+        }
+
         postGameTimer = new ElfTimer(plugin, () -> {
             plugin.getGameHandler().teleportToLobbyLocation(getPlayersToPlay());
-        }, 10, TimeTickType.DOWN);
+        }, 10, TimeTickType.DOWN, false);
         postGameTimer.start();
 
     }
 
-    private void teleportPlayers() {
+    @Override
+    public void broadcastGameMessage(String string) {
+        MessageFile messageFile = plugin.getFileUtil().getMessageFile();
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(string.replace("%prefix%", messageFile.getBombTagPrefix()));
+        }
+    }
+
+    private void teleportPlayersToGameLobby() {
+        for (Map.Entry<UUID, Player> entry : getPlayersToPlay().entrySet()) {
+            Player player = entry.getValue();
+            player.teleport(map.getLobbyLocation());
+        }
+    }
+
+    private void teleportPlayersToGame() {
         int i = 0;
         for (Map.Entry<UUID, Player> entry : getPlayersToPlay().entrySet()) {
             Player player = entry.getValue();
@@ -122,15 +165,25 @@ public class PeppermintGame extends ElfGame {
 
     private void pickRandomPlayerToBeTagged() {
         int i = new Random().nextInt(getPlayersToPlay().size());
-        bombTag.tagPlayer((UUID)getPlayersToPlay().keySet().toArray()[i]);
+        bombTag.tagPlayer((UUID) getPlayersToPlay().keySet().toArray()[i]);
 
     }
 
     public void killPlayer(Player player) {
-        player.sendMessage("You Have Died");
+        MessageFile messageFile = plugin.getFileUtil().getMessageFile();
+        placements.addPlacement(player.getUniqueId(), alivePlayers.size() + 1);
+        player.sendMessage(messageFile.getBombTagBombPlayerDied().replace("%placement%", (alivePlayers.size() + 1) + ""));
+        broadcastGameMessage(messageFile.getBombTagAnnounceBombExplode().replace("%player_name%", player.getName()));
         alivePlayers.remove(player.getUniqueId());
         player.teleport(map.getSpectatorSpawn());
+        checkWinner();
 
+    }
+
+    public void checkWinner() {
+        if (alivePlayers.size() <= 1) {
+            finish();
+        }
     }
 
 }

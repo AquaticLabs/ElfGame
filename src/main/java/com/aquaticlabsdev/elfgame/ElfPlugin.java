@@ -5,7 +5,9 @@ import com.aquaticlabsdev.elfgame.commands.Subcommand;
 import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalActivateSubcommand;
 import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalCommand;
 import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalRoleSubcommand;
+import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalSetLobbySubcommand;
 import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalSetupSubcommand;
+import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalStartGameSubcommand;
 import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalWandSubcommand;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.data.PlayerDataHolder;
@@ -66,7 +68,7 @@ public final class ElfPlugin extends ElfRoyalPlugin {
             PlayerData playerData = getPlayerHolder().getOrInsert(player.getUniqueId());
             playerData.setName(player.getName());
             playerData.save();
-
+            gameHandler.addToGamePlayers(playerData);
         }
     }
 
@@ -124,6 +126,8 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         erSub.put("wand", new ElfRoyalWandSubcommand());
         erSub.put("activate", new ElfRoyalActivateSubcommand(this));
         erSub.put("role", new ElfRoyalRoleSubcommand(this));
+        erSub.put("start", new ElfRoyalStartGameSubcommand(this));
+        erSub.put("setmainlobbyloc", new ElfRoyalSetLobbySubcommand(this));
         CommandManager elfRoyalManager = new CommandManager(this, new ElfRoyalCommand(this), erSub);
         Objects.requireNonNull(getCommand("elfroyal")).setExecutor(elfRoyalManager);
 

@@ -74,4 +74,12 @@ public class SpleefGame extends ElfGame {
         setState(GameState.POSTGAME);
 
     }
+    @Override
+    public String type() {
+        return type.name();
+    }
+    @Override
+    public void broadcastGameMessage(String string) {
+
+    }
 }
