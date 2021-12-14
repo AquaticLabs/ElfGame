@@ -4,6 +4,7 @@ import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.commands.Subcommand;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.game.GameType;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BattleRoyaleMap;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagMap;
 import com.aquaticlabsdev.elfgame.setup.SelectionToMap;
 import com.aquaticlabsdev.elfgame.util.Permission;
@@ -70,18 +71,33 @@ public class ElfRoyalSetupSubcommand implements Subcommand {
         GameMap map = SelectionToMap.getMapFromSelection(plugin, selection, type, mapName);
         map.save();
         player.sendMessage("Map Created");
-        if (type == GameType.BOMB_TAG) {
-            BombTagMap pmap = (BombTagMap) map;
-            String specSet = pmap.getSpectatorSpawn() != null ? "Set." : "Not Set";
-            player.sendMessage("Spectator Spawn: " + specSet);
+        switch (type) {
+            case BOMB_TAG: {
+                BombTagMap pmap = (BombTagMap) map;
+                String specSet = pmap.getSpectatorSpawn() != null ? "Set." : "Not Set";
+                player.sendMessage("Spectator Spawn: " + specSet);
 
-            String lobbySet = pmap.getLobbyLocation() != null ? "Set." : "Not Set";
-            player.sendMessage("Lobby Spawn: " + lobbySet);
+                String lobbySet = pmap.getLobbyLocation() != null ? "Set." : "Not Set";
+                player.sendMessage("Lobby Spawn: " + lobbySet);
 
-            int playerSpawns = pmap.getPlayerSpawns().size();
-            player.sendMessage("Player Spawns: " + playerSpawns);
+                int playerSpawns = pmap.getPlayerSpawns().size();
+                player.sendMessage("Player Spawns: " + playerSpawns);
+            }
+            case BATTLE_ROYALE: {
+                BattleRoyaleMap brMap = (BattleRoyaleMap) map;
+
+                String playerSpawnSet = brMap.getPlayerSpawn() != null ? "Set." : "Not Set";
+                player.sendMessage("Player Spawn: " + playerSpawnSet);
+
+                String specSet = brMap.getSpectatorSpawn() != null ? "Set." : "Not Set";
+                player.sendMessage("Spectator Spawn: " + specSet);
+
+                String lobbySet = brMap.getLobbyLocation() != null ? "Set." : "Not Set";
+                player.sendMessage("Lobby Spawn: " + lobbySet);
+            }
 
         }
+
 
         return true;
     }

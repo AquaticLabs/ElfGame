@@ -36,8 +36,6 @@ public class BombTagGame extends ElfGame {
     private GameTimer preGameTimer;
     private GameTimer postGameTimer;
     private final GameType type = GameType.BOMB_TAG;
-    @Getter
-    private boolean activated;
     @Setter
     private BombTagMap map;
     @Getter
@@ -61,6 +59,8 @@ public class BombTagGame extends ElfGame {
         map.load();
         for (Map.Entry<UUID, PlayerData> entry : plugin.getGameHandler().getAvailablePlayersToPlay().entrySet()) {
             Player p = Bukkit.getPlayer(entry.getKey());
+            PlayerData data = plugin.getPlayerData(p);
+            data.setCurrentGame(this);
 
             if (p == null || !p.isOnline()) {
                 return;
@@ -86,7 +86,7 @@ public class BombTagGame extends ElfGame {
         }, this, 10, TimeTickType.DOWN, false);
         preGameTimer.start();
 
-        System.out.println("Game: " + getGameID() + " starting in " + preGameTimer.getTime() + " seconds");
+        System.out.println("Game: " + getGameID() + " Type: " + type.name()  + " starting in " + preGameTimer.getTime() + " seconds");
         alivePlayers.addAll(getPlayersToPlay().keySet());
     }
 

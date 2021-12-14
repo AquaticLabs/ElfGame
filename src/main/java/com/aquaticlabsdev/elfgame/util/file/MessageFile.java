@@ -45,6 +45,19 @@ public class MessageFile {
     private String bombTagBombPlayerDied;
     private List<String> bombTagWinners;
 
+    // Battle Royale
+    private String battleRoyalePrefix;
+    private List<String> battleRoyaleActivated;
+    private String battleRoyaleStartNaturally;
+    private String battleRoyaleStartForcefully;
+    private String battleRoyaleStartCountdown;
+    private String battleRoyaleStarted;
+    private List<String> battleRoyaleWinners;
+
+
+
+
+
 
     public MessageFile(ElfPlugin plugin, File file, FileConfiguration fileConfiguration) {
         this.plugin = plugin;

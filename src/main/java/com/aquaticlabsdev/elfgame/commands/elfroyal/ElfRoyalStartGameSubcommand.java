@@ -3,6 +3,7 @@ package com.aquaticlabsdev.elfgame.commands.elfroyal;
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.commands.Subcommand;
 import com.aquaticlabsdev.elfgame.game.GameType;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagMap;
 import com.aquaticlabsdev.elfgame.util.Permission;
 import com.aquaticlabsdev.elfgame.util.file.MessageFile;
 import org.bukkit.command.Command;
@@ -53,7 +54,9 @@ public class ElfRoyalStartGameSubcommand implements Subcommand {
     public List<String> onTabComplete(CommandSender sender, Command cmd, String[] args) {
         if (args.length == 2) {
             List<String> tabList = new ArrayList<>();
-            tabList.add(plugin.getGameHandler().getActiveGame().type());
+            if (plugin.getGameHandler().getActiveGame().type() != null) {
+                tabList.add(plugin.getGameHandler().getActiveGame().type());
+            }
             return tabList;
         }
 
