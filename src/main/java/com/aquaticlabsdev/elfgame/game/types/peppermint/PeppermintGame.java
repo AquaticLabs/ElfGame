@@ -145,6 +145,13 @@ public class PeppermintGame extends ElfGame {
         }
     }
 
+    @Override
+    public void playerAbandon(Player player) {
+        alivePlayers.remove(player.getUniqueId());
+        getPlayersToPlay().remove(player.getUniqueId());
+        checkWinner();
+    }
+
     private void teleportPlayersToGameLobby() {
         for (Map.Entry<UUID, Player> entry : getPlayersToPlay().entrySet()) {
             Player player = entry.getValue();

@@ -7,6 +7,7 @@ import com.aquaticlabsdev.elfroyal.game.GameState;
 import com.aquaticlabsdev.elfroyal.timer.GameTimer;
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfroyal.timer.TimeTickType;
+import org.bukkit.entity.Player;
 
 /**
  * @Author: extremesnow
@@ -80,6 +81,11 @@ public class SpleefGame extends ElfGame {
     }
     @Override
     public void broadcastGameMessage(String string) {
+
+    }
+
+    @Override
+    public void playerAbandon(Player player) {
 
     }
 }
