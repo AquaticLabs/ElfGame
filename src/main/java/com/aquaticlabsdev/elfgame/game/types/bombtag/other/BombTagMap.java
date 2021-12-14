@@ -1,4 +1,4 @@
-package com.aquaticlabsdev.elfgame.game.types.peppermint.other;
+package com.aquaticlabsdev.elfgame.game.types.bombtag.other;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.game.GameType;
@@ -24,11 +24,11 @@ import java.util.Map;
  * On: 12/12/2021
  * At: 20:32
  */
-public class PeppermintMap implements GameMap {
+public class BombTagMap implements GameMap {
 
 
     @Getter
-    private static final Map<String, PeppermintMap> loadedMaps = new HashMap<>();
+    private static final Map<String, BombTagMap> loadedMaps = new HashMap<>();
 
 
     private final ElfPlugin plugin;
@@ -46,7 +46,7 @@ public class PeppermintMap implements GameMap {
     private Location lobbyLocation;
 
 
-    public PeppermintMap(ElfPlugin plugin, String mapName) {
+    public BombTagMap(ElfPlugin plugin, String mapName) {
         this.plugin = plugin;
         this.mapName = mapName;
     }

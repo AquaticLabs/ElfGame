@@ -1,7 +1,7 @@
-package com.aquaticlabsdev.elfgame.game.types.peppermint.other;
+package com.aquaticlabsdev.elfgame.game.types.bombtag.other;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
-import com.aquaticlabsdev.elfgame.game.types.peppermint.PeppermintGame;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.BombTagGame;
 
 import com.aquaticlabsdev.elfgame.util.file.MessageFile;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class BombTag {
     private final ElfPlugin plugin;
     private BukkitTask taskID = null;
 
-    private final PeppermintGame game;
+    private final BombTagGame game;
 
     @Getter @Setter
     private UUID taggedPlayer;
@@ -32,7 +32,7 @@ public class BombTag {
     private int time;
 
 
-    public BombTag(ElfPlugin plugin, PeppermintGame game, int time) {
+    public BombTag(ElfPlugin plugin, BombTagGame game, int time) {
         this.plugin = plugin;
         this.game = game;
         this.timeAmount = time;

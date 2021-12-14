@@ -2,7 +2,7 @@ package com.aquaticlabsdev.elfgame.setup;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.game.GameType;
-import com.aquaticlabsdev.elfgame.game.types.peppermint.other.PeppermintMap;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagMap;
 import com.aquaticlabsdev.elfgame.util.TemporaryBlankMap;
 import com.aquaticlabsdev.elfgame.util.Utils;
 import com.aquaticlabsdev.elfroyal.game.GameMap;
@@ -34,9 +34,9 @@ public class SelectionToMap {
     }
 
 
-    private static PeppermintMap bombTagMapFromSelection(ElfPlugin plugin, Selection selection, String mapName) {
+    private static BombTagMap bombTagMapFromSelection(ElfPlugin plugin, Selection selection, String mapName) {
 
-        PeppermintMap map = new PeppermintMap(plugin, mapName);
+        BombTagMap map = new BombTagMap(plugin, mapName);
 
         for (int x = (int) selection.getX1(); x < (int) selection.getX2(); x++) {
             for (int y = (int) selection.getY1(); y < (int) selection.getY2(); y++) {

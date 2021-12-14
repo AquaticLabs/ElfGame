@@ -11,8 +11,10 @@ import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalStartGameSubcommand;
 import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalWandSubcommand;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.data.PlayerDataHolder;
+import com.aquaticlabsdev.elfgame.events.PlayerJoin;
+import com.aquaticlabsdev.elfgame.events.PlayerQuit;
 import com.aquaticlabsdev.elfgame.game.GameHandler;
-import com.aquaticlabsdev.elfgame.game.types.peppermint.listeners.PeppermintEDEEvent;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.listeners.BombTagEDEEvent;
 import com.aquaticlabsdev.elfgame.setup.events.WandBlockClick;
 import com.aquaticlabsdev.elfgame.util.DebugLogger;
 import com.aquaticlabsdev.elfgame.util.file.FileUtil;
@@ -135,11 +137,12 @@ public final class ElfPlugin extends ElfRoyalPlugin {
 
     private void registerListeners() {
         new WandBlockClick(this);
+        new PlayerJoin(this);
+        new PlayerQuit(this);
 
 
         // BombTag
-        new PeppermintEDEEvent(this, gameHandler);
-
+        new BombTagEDEEvent(this, gameHandler);
 
     }
 

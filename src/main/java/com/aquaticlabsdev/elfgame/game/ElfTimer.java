@@ -41,4 +41,9 @@ public class ElfTimer extends GameTimer {
             runnable.run();
         }
     }
+
+    @Override
+    public int getTime() {
+        return time;
+    }
 }

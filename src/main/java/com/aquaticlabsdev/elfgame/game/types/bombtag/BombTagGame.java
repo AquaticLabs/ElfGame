@@ -1,11 +1,12 @@
-package com.aquaticlabsdev.elfgame.game.types.peppermint;
+package com.aquaticlabsdev.elfgame.game.types.bombtag;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.game.ElfTimer;
 import com.aquaticlabsdev.elfgame.game.GameType;
-import com.aquaticlabsdev.elfgame.game.types.peppermint.other.BombTag;
-import com.aquaticlabsdev.elfgame.game.types.peppermint.other.PeppermintMap;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTag;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagMap;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagPregameTimer;
 import com.aquaticlabsdev.elfgame.util.file.MessageFile;
 import com.aquaticlabsdev.elfroyal.game.ElfGame;
 import com.aquaticlabsdev.elfroyal.game.GamePlacements;
@@ -29,7 +30,7 @@ import java.util.UUID;
  * On: 12/12/2021
  * At: 19:48
  */
-public class PeppermintGame extends ElfGame {
+public class BombTagGame extends ElfGame {
 
     private final ElfPlugin plugin;
     private GameTimer preGameTimer;
@@ -38,7 +39,7 @@ public class PeppermintGame extends ElfGame {
     @Getter
     private boolean activated;
     @Setter
-    private PeppermintMap map;
+    private BombTagMap map;
     @Getter
     private BombTag bombTag;
     @Getter
@@ -47,9 +48,9 @@ public class PeppermintGame extends ElfGame {
     private List<UUID> alivePlayers = new ArrayList<>();
 
 
-    public PeppermintGame(ElfPlugin plugin, String id) {
+    public BombTagGame(ElfPlugin plugin, String id) {
         super(id);
-        map = new PeppermintMap(plugin, id);
+        map = new BombTagMap(plugin, id);
         this.plugin = plugin;
     }
 
@@ -79,10 +80,10 @@ public class PeppermintGame extends ElfGame {
     @Override
     public void startPregameCountdown() {
         setState(GameState.PREGAME);
-        preGameTimer = new ElfTimer(plugin, () -> {
+        preGameTimer = new BombTagPregameTimer(plugin, () -> {
             teleportPlayersToGame();
             start();
-        }, 10, TimeTickType.DOWN, false);
+        }, this, 10, TimeTickType.DOWN, false);
         preGameTimer.start();
 
         System.out.println("Game: " + getGameID() + " starting in " + preGameTimer.getTime() + " seconds");
@@ -178,8 +179,8 @@ public class PeppermintGame extends ElfGame {
 
     public void killPlayer(Player player) {
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
-        placements.addPlacement(player.getUniqueId(), alivePlayers.size() + 1);
-        player.sendMessage(messageFile.getBombTagBombPlayerDied().replace("%placement%", (alivePlayers.size() + 1) + ""));
+        placements.addPlacement(player.getUniqueId(), alivePlayers.size());
+        player.sendMessage(messageFile.getBombTagBombPlayerDied().replace("%prefix%", messageFile.getBombTagPrefix()).replace("%placement%", (alivePlayers.size()) + ""));
         broadcastGameMessage(messageFile.getBombTagAnnounceBombExplode().replace("%player_name%", player.getName()));
         alivePlayers.remove(player.getUniqueId());
         player.teleport(map.getSpectatorSpawn());
@@ -189,8 +190,10 @@ public class PeppermintGame extends ElfGame {
 
     public void checkWinner() {
         if (alivePlayers.size() <= 1) {
+            placements.addPlacement(alivePlayers.get(0), 1);
             finish();
         }
+        pickRandomPlayerToBeTagged();
     }
 
 }

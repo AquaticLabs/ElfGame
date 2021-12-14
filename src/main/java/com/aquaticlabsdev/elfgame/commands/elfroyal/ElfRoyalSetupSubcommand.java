@@ -4,7 +4,7 @@ import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.commands.Subcommand;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.game.GameType;
-import com.aquaticlabsdev.elfgame.game.types.peppermint.other.PeppermintMap;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagMap;
 import com.aquaticlabsdev.elfgame.setup.SelectionToMap;
 import com.aquaticlabsdev.elfgame.util.Permission;
 import com.aquaticlabsdev.elfgame.util.file.MapFile;
@@ -71,7 +71,7 @@ public class ElfRoyalSetupSubcommand implements Subcommand {
         map.save();
         player.sendMessage("Map Created");
         if (type == GameType.BOMB_TAG) {
-            PeppermintMap pmap = (PeppermintMap) map;
+            BombTagMap pmap = (BombTagMap) map;
             String specSet = pmap.getSpectatorSpawn() != null ? "Set." : "Not Set";
             player.sendMessage("Spectator Spawn: " + specSet);
 

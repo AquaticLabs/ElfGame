@@ -1,7 +1,7 @@
 package com.aquaticlabsdev.elfgame.game;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
-import com.aquaticlabsdev.elfgame.game.types.peppermint.PeppermintGame;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.BombTagGame;
 import com.aquaticlabsdev.elfroyal.game.ElfGame;
 
 /**
@@ -15,7 +15,7 @@ public class GameFactory {
         switch (type) {
             case SPLEEF:
             default:
-                return new PeppermintGame(plugin, id);
+                return new BombTagGame(plugin, id);
         }
     }
 

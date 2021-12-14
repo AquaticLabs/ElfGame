@@ -41,7 +41,7 @@ public class ElfRoyalStartGameSubcommand implements Subcommand {
         }
         final Player player = (Player) sender;
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
-        if (plugin.getGameHandler().getActiveGame().getGameID().equalsIgnoreCase(args[1])) {
+        if (plugin.getGameHandler().getActiveGame().type().equalsIgnoreCase(args[1])) {
             plugin.getGameHandler().getActiveGame().startPregameCountdown();
 
         }
@@ -53,7 +53,7 @@ public class ElfRoyalStartGameSubcommand implements Subcommand {
     public List<String> onTabComplete(CommandSender sender, Command cmd, String[] args) {
         if (args.length == 2) {
             List<String> tabList = new ArrayList<>();
-            tabList.add(plugin.getGameHandler().getActiveGame().getGameID());
+            tabList.add(plugin.getGameHandler().getActiveGame().type());
             return tabList;
         }
 
