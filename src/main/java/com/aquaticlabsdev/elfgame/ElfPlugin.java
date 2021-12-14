@@ -14,6 +14,9 @@ import com.aquaticlabsdev.elfgame.data.PlayerDataHolder;
 import com.aquaticlabsdev.elfgame.events.PlayerJoin;
 import com.aquaticlabsdev.elfgame.events.PlayerQuit;
 import com.aquaticlabsdev.elfgame.game.GameHandler;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDeath;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerInteract;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BRRingTimer;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.listeners.BombTagEDEEvent;
 import com.aquaticlabsdev.elfgame.setup.events.WandBlockClick;
 import com.aquaticlabsdev.elfgame.util.DebugLogger;
@@ -144,6 +147,9 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         // BombTag
         new BombTagEDEEvent(this, gameHandler);
 
+        // Battle Royale
+        new BRPlayerDeath(this, gameHandler);
+        new BRPlayerInteract(this, gameHandler);
     }
 
     public PlayerData getPlayerData(Player player) {

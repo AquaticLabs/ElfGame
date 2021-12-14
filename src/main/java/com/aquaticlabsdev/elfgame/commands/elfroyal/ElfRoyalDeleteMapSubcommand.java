@@ -49,11 +49,6 @@ public class ElfRoyalDeleteMapSubcommand implements Subcommand {
             return true;
         }
         Player player = (Player) sender;
-        PlayerData data = plugin.getPlayerData(player);
-
-
-
-        Selection selection = data.getSelection();
         String gameTypeStr = args[1].toUpperCase();
         GameType type = GameType.valueOf(gameTypeStr);
 
@@ -65,17 +60,11 @@ public class ElfRoyalDeleteMapSubcommand implements Subcommand {
             return true;
         }
 
-        GameMap map = getMapFromFile(mapFile, type, mapName);
-
-        
-
+        mapFile.getMapConfig().set("Maps." + type.name()  + "." + mapName, null);
+        mapFile.save();
         player.sendMessage("Map Deleted");
 
         return true;
-    }
-
-    private void getMapFromFile(MapFile mapFile, GameType type, String mapName) {
-
     }
 
     @Override

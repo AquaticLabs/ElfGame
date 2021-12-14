@@ -188,6 +188,11 @@ public class BattleRoyaleMap implements GameMap {
 
     }
 
+    @Override
+    public void delete() {
+
+    }
+
 
     @Override
     public Selection getMapBounds() {
