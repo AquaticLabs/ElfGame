@@ -6,6 +6,7 @@ import com.aquaticlabsdev.elfgame.game.GameFactory;
 import com.aquaticlabsdev.elfgame.game.GameType;
 import com.aquaticlabsdev.elfgame.util.Permission;
 import com.aquaticlabsdev.elfgame.util.Utils;
+import com.aquaticlabsdev.elfgame.util.file.MapFile;
 import com.aquaticlabsdev.elfgame.util.file.MessageFile;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -54,9 +55,9 @@ public class ElfRoyalActivateSubcommand implements Subcommand {
         plugin.getGameHandler().activateGame(GameFactory.createGame(plugin, type, mapName));
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
 
-        List<String> activatedMessage = messageFile.getGameActivatedMessage(plugin.getGameHandler().getActiveGame().type());
+        List<String> activatedMessage = messageFile.getGameActivatedMessage(type);
         for (String s : activatedMessage) {
-            player.sendMessage(s.replace("%prefix%", messageFile.getBombTagPrefix()));
+            player.sendMessage(messageFile.replaceGamePrefixes(s, type));
         }
         return true;
     }
@@ -78,8 +79,9 @@ public class ElfRoyalActivateSubcommand implements Subcommand {
             return tabList;
         }
         if (args.length == 3) {
-            List<String> tabList = new ArrayList<>();
-            tabList.add("<Map-Name>");
+            MapFile mapFile = plugin.getFileUtil().getMapFile();
+            GameType gameType = GameType.valueOf(args[1].toUpperCase());
+            List<String> tabList = new ArrayList<>(mapFile.getMapConfig().getConfigurationSection("Maps." + gameType.name()).getKeys(false));
             return tabList;
         }
 

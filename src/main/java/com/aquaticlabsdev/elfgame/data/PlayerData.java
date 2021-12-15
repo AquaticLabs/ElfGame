@@ -30,6 +30,8 @@ public class PlayerData extends DataObject {
     private String name;
     private int cookies;
 
+    private boolean canBuild = false;
+
     private Location location1;
     private Location location2;
     private Selection selection;

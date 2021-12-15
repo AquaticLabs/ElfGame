@@ -34,6 +34,7 @@ public class BombTagMap implements GameMap {
     private final ElfPlugin plugin;
     private final String mapName;
     private final GameType gameType = GameType.BOMB_TAG;
+    @Setter
     private Selection selection;
 
     @Getter

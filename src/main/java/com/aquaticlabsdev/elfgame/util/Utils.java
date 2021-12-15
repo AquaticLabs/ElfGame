@@ -9,8 +9,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -104,4 +108,51 @@ public class Utils {
                 return 180;
         }
     }
+
+    public static String formatSeconds(int seconds) {
+        long millis = seconds * 1000L;
+
+        int sec = (int) (millis / 1000) % 60;
+        int min = (int) ((millis / (1000 * 60)) % 60);
+        int hours = (int) ((millis / (1000 * 60 * 60)) % 24);
+        int d = (int) TimeUnit.MILLISECONDS.toDays(millis);
+
+        StringBuilder builder = new StringBuilder();
+
+        if (d >= 1) {
+            return "> " + d + " days";
+        }
+        if (hours > 0) builder.append(hours).append(" hour(s) ");
+        if (min > 0) builder.append(min).append(" minute(s) ");
+        if (sec > 0) builder.append(sec).append(" second(s)");
+
+        return builder.toString();
+    }
+
+    public static Integer randomNumber(int min, int max) {
+        Random i = new Random();
+        if (max == min) {
+            return max;
+        } else {
+            return min + i.nextInt(max - min);
+        }
+    }
+    public static String addCommas(Object o) {
+        if (o instanceof Integer) {
+            int i = (int) o;
+            if (i < 1000) {
+                return Integer.toString(i);
+            }
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+            return numberFormat.format(i);
+        } else {
+            double d = (double) o;
+            if (d < 1000.0) {
+                return Double.toString(d);
+            }
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+            return numberFormat.format(d);
+        }
+    }
+
 }

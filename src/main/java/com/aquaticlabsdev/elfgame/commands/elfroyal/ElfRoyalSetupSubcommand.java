@@ -70,7 +70,7 @@ public class ElfRoyalSetupSubcommand implements Subcommand {
 
         GameMap map = SelectionToMap.getMapFromSelection(plugin, selection, type, mapName);
         map.save();
-        player.sendMessage("Map Created");
+        player.sendMessage("Map Created: " + mapName);
         switch (type) {
             case BOMB_TAG: {
                 BombTagMap pmap = (BombTagMap) map;

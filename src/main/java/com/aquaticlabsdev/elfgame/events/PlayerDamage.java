@@ -16,8 +16,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 public class PlayerDamage implements Listener {
 
     private final ElfPlugin plugin;
+
     public PlayerDamage(ElfPlugin plugin) {
         this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler
@@ -26,9 +28,9 @@ public class PlayerDamage implements Listener {
             Player p = (Player) e.getEntity();
             PlayerData data = plugin.getPlayerData(p);
 
-            if (data.getCurrentGame() != null && data.getCurrentGame().getState() != GameState.INGAME) {
-                e.setCancelled(true);
-            }
+            if (data.getCurrentGame() != null && data.getCurrentGame().getState() == GameState.INGAME) return;
+            e.setCancelled(true);
+
         }
     }
 

@@ -9,7 +9,9 @@ import com.aquaticlabsdev.elfgame.util.Utils;
 import com.aquaticlabsdev.elfroyal.game.GameMap;
 import com.aquaticlabsdev.elfroyal.loc.Selection;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.WallSign;
 
 /**
  * @Author: extremesnow
@@ -42,7 +44,7 @@ public class SelectionToMap {
         for (int x = selection.getX1(); x < selection.getX2(); x++) {
             for (int y = selection.getY1(); y < selection.getY2(); y++) {
                 for (int z = selection.getZ1(); z < selection.getZ2(); z++) {
-                    if (selection.getWorld().getBlockAt(x, y, z).getState() instanceof Sign) {
+                    if (selection.getWorld().getBlockAt(x, y, z).getBlockData() instanceof org.bukkit.block.data.type.Sign) {
                         Sign sign = (Sign) selection.getWorld().getBlockAt(x, y, z).getState();
                         org.bukkit.block.data.type.Sign signX = (org.bukkit.block.data.type.Sign) sign.getBlockData();
                        // System.out.println(signX.getRotation().name());
@@ -63,12 +65,11 @@ public class SelectionToMap {
                             location.setYaw(Utils.faceToYaw(signX.getRotation()));
                             map.setLobbyLocation(location);
                         }
-
-
                     }
                 }
             }
         }
+        map.setSelection(selection);
         return map;
     }
 
@@ -80,7 +81,7 @@ public class SelectionToMap {
         for (int x = selection.getX1(); x < selection.getX2(); x++) {
             for (int y = selection.getY1(); y < selection.getY2(); y++) {
                 for (int z = selection.getZ1(); z < selection.getZ2(); z++) {
-                    if (selection.getWorld().getBlockAt(x, y, z).getState() instanceof Sign) {
+                    if (selection.getWorld().getBlockAt(x, y, z).getBlockData() instanceof org.bukkit.block.data.type.Sign) {
                         Sign sign = (Sign) selection.getWorld().getBlockAt(x, y, z).getState();
                         org.bukkit.block.data.type.Sign signX = (org.bukkit.block.data.type.Sign) sign.getBlockData();
 
@@ -100,10 +101,16 @@ public class SelectionToMap {
                             location.setYaw(Utils.faceToYaw(signX.getRotation()));
                             map.setLobbyLocation(location);
                         }
+                        if (sign.getLine(0).equalsIgnoreCase("ring_center")) {
+                            Location location = sign.getLocation();
+                            location.setYaw(Utils.faceToYaw(signX.getRotation()));
+                            map.setRingCenterLocation(location);
+                        }
                     }
                 }
             }
         }
+        map.setSelection(selection);
         return map;
     }
 

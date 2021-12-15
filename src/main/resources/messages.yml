@@ -6,21 +6,57 @@ Messages:
     - ""
   base-prefix: "&8[&cElf&3Royale&8]"
 
+
 Games:
   SPLEEF:
     starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
     starting: ""
     finish: ""
   BATTLE_ROYALE:
-    starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
-    starting: ""
-    finish: ""
+    prefix: "&8&l[&2&lBattle&4&lRoyale&8&l]&7"
+    map-credits:
+      - "&7&l&m---------------------------"
+      - "&2&l        Map Credits "
+      - "&2&l         Builders "
+      - "&2&l  &aBill, Eden Olifant, Ryan "
+      - "&7&l&m---------------------------"
+    activated:
+      - "&7---------------------------"
+      - "&cBattle Royale Activated. "
+      - "&7Run /er start Battle_Royale"
+      - "&7to start the game."
+      - "&7---------------------------"
+    start: "%prefix% &cBattle Royale Started."
+    force-start: "%prefix% &cBattle Royale Forcefully Started."
+    start-countdown: "%prefix% &6Battle Royale &7is starting in %seconds% seconds"
+    started: "%prefix% &6Battle Royale 7Started!"
+    kill: "%prefix% &6%killer_name% &chas killed &6%victim_name%!"
+    kill-no-killer: "%prefix% &6%victim_name% &cdied!"
+    player-died: "%prefix% &cYou have been eliminated! You came in %placement%"
+    ring: "%prefix% &cRing Closing in %time%"
+    ring-closing: "%prefix% &cRing has started Closing"
+    grace-period: "%prefix% &cYou have &6%time% &cuntil PvP is activated."
+    grace-period-ended: "%prefix% &cGrace Period has Ended. Let the onslaught begin."
+    winners:
+      - "&7---------------------------"
+      - "&c&l   Game has Ended "
+      - "&6    The winners are: "
+      - "&6   1st: %1st%"
+      - "&6   2nd: %2nd%"
+      - "&6   3rd: %3rd%"
+      - "&7---------------------------"
   SANTAS_WORKSHOP:
     starting-countdown: "&bSnowGlobe Spleef &7is starting in %seconds% seconds"
     starting: ""
     finish: ""
   BOMB_TAG:
-    prefix: "&8[&cBomb&4Tag&8]"
+    prefix: "&8[&cBomb&4Tag&8]&7"
+    map-credits:
+      - "&7&l&m---------------------------"
+      - "&3&l        Map Credits "
+      - "&3&l         Builders "
+      - "&3&l  &aBill, Eden Olifant, Ryan "
+      - "&7&l&m---------------------------"
     activated:
       - "&7---------------------------"
       - "&cBomb Tag Activated. "

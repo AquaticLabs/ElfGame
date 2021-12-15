@@ -2,20 +2,20 @@ package com.aquaticlabsdev.elfgame;
 
 import com.aquaticlabsdev.elfgame.commands.CommandManager;
 import com.aquaticlabsdev.elfgame.commands.Subcommand;
-import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalActivateSubcommand;
-import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalCommand;
-import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalRoleSubcommand;
-import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalSetLobbySubcommand;
-import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalSetupSubcommand;
-import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalStartGameSubcommand;
-import com.aquaticlabsdev.elfgame.commands.elfroyal.ElfRoyalWandSubcommand;
+import com.aquaticlabsdev.elfgame.commands.elfroyal.*;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.data.PlayerDataHolder;
+import com.aquaticlabsdev.elfgame.events.BlockBreak;
+import com.aquaticlabsdev.elfgame.events.BlockPlace;
+import com.aquaticlabsdev.elfgame.events.PlayerDamage;
 import com.aquaticlabsdev.elfgame.events.PlayerJoin;
 import com.aquaticlabsdev.elfgame.events.PlayerQuit;
 import com.aquaticlabsdev.elfgame.game.GameHandler;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDamage;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDeath;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDrop;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerInteract;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerMove;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BRRingTimer;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.listeners.BombTagEDEEvent;
 import com.aquaticlabsdev.elfgame.setup.events.WandBlockClick;
@@ -132,7 +132,10 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         erSub.put("activate", new ElfRoyalActivateSubcommand(this));
         erSub.put("role", new ElfRoyalRoleSubcommand(this));
         erSub.put("start", new ElfRoyalStartGameSubcommand(this));
+        erSub.put("stop", new ElfRoyalStopGameSubcommand(this));
+        erSub.put("deletemap", new ElfRoyalDeleteMapSubcommand(this));
         erSub.put("setmainlobbyloc", new ElfRoyalSetLobbySubcommand(this));
+        erSub.put("build", new ElfRoyalToggleBuildSubcommand(this));
         CommandManager elfRoyalManager = new CommandManager(this, new ElfRoyalCommand(this), erSub);
         Objects.requireNonNull(getCommand("elfroyal")).setExecutor(elfRoyalManager);
 
@@ -142,7 +145,9 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         new WandBlockClick(this);
         new PlayerJoin(this);
         new PlayerQuit(this);
-
+        new BlockBreak(this);
+        new BlockPlace(this);
+        new PlayerDamage(this);
 
         // BombTag
         new BombTagEDEEvent(this, gameHandler);
@@ -150,6 +155,11 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         // Battle Royale
         new BRPlayerDeath(this, gameHandler);
         new BRPlayerInteract(this, gameHandler);
+        new BRPlayerMove(this, gameHandler);
+        new BRPlayerMove(this, gameHandler);
+        new BRPlayerDrop(this, gameHandler);
+        new BRPlayerDamage(this, gameHandler);
+
     }
 
     public PlayerData getPlayerData(Player player) {

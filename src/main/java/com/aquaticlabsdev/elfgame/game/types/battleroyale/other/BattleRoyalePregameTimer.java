@@ -42,12 +42,12 @@ public class BattleRoyalePregameTimer extends ElfTimer {
                 if (time % 10 == 0 && time > 4) {
                     game.broadcastGameMessage(messageFile.getBattleRoyaleStartCountdown()
                             .replace("%seconds%", time + "")
-                            .replace("%prefix%", messageFile.getBombTagPrefix()));
+                            .replace("%prefix%", messageFile.getBattleRoyalePrefix()));
                 }
                 if (time <= 5) {
                     game.broadcastGameMessage(messageFile.getBattleRoyaleStartCountdown()
                             .replace("%seconds%", time + "")
-                            .replace("%prefix%", messageFile.getBombTagPrefix()));
+                            .replace("%prefix%", messageFile.getBattleRoyalePrefix()));
                 }
                 if (getTime() <= 0) {
                     stop();

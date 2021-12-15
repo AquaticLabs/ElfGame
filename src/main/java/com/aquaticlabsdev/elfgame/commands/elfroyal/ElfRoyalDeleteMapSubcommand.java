@@ -55,8 +55,8 @@ public class ElfRoyalDeleteMapSubcommand implements Subcommand {
         String mapName = args[2];
 
         MapFile mapFile = plugin.getFileUtil().getMapFile();
-        if (mapFile.getMapConfig().get("Maps." + type.name() + "." + mapName) != null) {
-            player.sendMessage("This map already exists.");
+        if (mapFile.getMapConfig().get("Maps." + type.name() + "." + mapName) == null) {
+            player.sendMessage("This map doesn't exist.");
             return true;
         }
 
@@ -69,7 +69,7 @@ public class ElfRoyalDeleteMapSubcommand implements Subcommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String[] args) {
-        if (args.length == 3) {
+        if (args.length == 2) {
             List<GameType> keySet = new ArrayList<>(Arrays.asList(GameType.values()));
             List<String> tabList = new ArrayList<>();
             for (GameType key : keySet) {
@@ -83,7 +83,7 @@ public class ElfRoyalDeleteMapSubcommand implements Subcommand {
             Collections.sort(newList);
             return tabList;
         }
-        if (args.length == 2) {
+        if (args.length == 3) {
             List<String> tabList = new ArrayList<>();
             tabList.add("<Map-Name>");
             return tabList;

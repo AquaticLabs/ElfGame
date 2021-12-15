@@ -62,7 +62,7 @@ public class BombTagGame extends ElfGame {
             PlayerData data = plugin.getPlayerData(p);
             data.setCurrentGame(this);
 
-            if (p == null || !p.isOnline()) {
+            if (!p.isOnline()) {
                 return;
             }
             getPlayersToPlay().putIfAbsent(entry.getKey(), p);
@@ -80,6 +80,11 @@ public class BombTagGame extends ElfGame {
     @Override
     public void startPregameCountdown() {
         setState(GameState.PREGAME);
+        MessageFile file = plugin.getFileUtil().getMessageFile();
+        for (String s : file.getBombTagMapCredits()) {
+            broadcastGameMessage(s);
+        }
+
         preGameTimer = new BombTagPregameTimer(plugin, () -> {
             teleportPlayersToGame();
             start();
@@ -158,6 +163,7 @@ public class BombTagGame extends ElfGame {
             Player player = entry.getValue();
             player.teleport(map.getLobbyLocation());
         }
+
     }
 
     private void teleportPlayersToGame() {

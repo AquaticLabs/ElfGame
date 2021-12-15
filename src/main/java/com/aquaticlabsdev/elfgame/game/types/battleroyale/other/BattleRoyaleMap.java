@@ -2,18 +2,26 @@ package com.aquaticlabsdev.elfgame.game.types.battleroyale.other;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.game.GameType;
-import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagMap;
 import com.aquaticlabsdev.elfgame.util.file.MapFile;
 import com.aquaticlabsdev.elfroyal.game.GameMap;
 import com.aquaticlabsdev.elfroyal.loc.LocationType;
 import com.aquaticlabsdev.elfroyal.loc.Selection;
 import lombok.Getter;
 import lombok.Setter;
+import me.extremesnow.datalib.other.DataPair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +40,10 @@ public class BattleRoyaleMap implements GameMap {
     private final ElfPlugin plugin;
     private final String mapName;
     private final GameType gameType = GameType.BATTLE_ROYALE;
+    @Setter
     private Selection selection;
+
+    private HashMap<Location, DataPair<BlockData, BlockState>> blocksRemoved = new HashMap<>();
 
     @Getter
     @Setter
@@ -43,6 +54,9 @@ public class BattleRoyaleMap implements GameMap {
     @Getter
     @Setter
     private Location lobbyLocation;
+    @Getter
+    @Setter
+    private Location ringCenterLocation;
 
 
     public BattleRoyaleMap(ElfPlugin plugin, String mapName) {
@@ -58,7 +72,6 @@ public class BattleRoyaleMap implements GameMap {
     @Override
     public void save() {
         MapFile maps = plugin.getFileUtil().getMapFile();
-
 
         if (playerSpawn != null) {
 
@@ -79,8 +92,8 @@ public class BattleRoyaleMap implements GameMap {
                             + ":" + spectatorSpawn.getYaw()
                             + ":" + spectatorSpawn.getPitch());
         }
-        if (lobbyLocation != null) {
 
+        if (lobbyLocation != null) {
             maps.getMapConfig().set("Maps." + gameType.name() + "." + mapName + ".lobby-loc",
                     lobbyLocation.getWorld().getName()
                             + ":" + lobbyLocation.getX()
@@ -89,8 +102,17 @@ public class BattleRoyaleMap implements GameMap {
                             + ":" + lobbyLocation.getYaw()
                             + ":" + lobbyLocation.getPitch());
         }
-        if (selection != null) {
+        if (ringCenterLocation != null) {
+            maps.getMapConfig().set("Maps." + gameType.name() + "." + mapName + ".ring-center-loc",
+                    ringCenterLocation.getWorld().getName()
+                            + ":" + ringCenterLocation.getX()
+                            + ":" + ringCenterLocation.getY()
+                            + ":" + ringCenterLocation.getZ()
+                            + ":" + ringCenterLocation.getYaw()
+                            + ":" + ringCenterLocation.getPitch());
+        }
 
+        if (selection != null) {
 
             maps.getMapConfig().set("Maps." + gameType.name() + "." + mapName + ".selection.world", selection.getWorld().getName());
 
@@ -146,7 +168,7 @@ public class BattleRoyaleMap implements GameMap {
                 Location playerLoc = new Location(world, x, y, z);
                 playerLoc.setYaw(yaw);
                 playerLoc.setPitch(pitch);
-                this.spectatorSpawn = playerLoc;
+                this.playerSpawn = playerLoc;
             }
 
 
@@ -182,15 +204,68 @@ public class BattleRoyaleMap implements GameMap {
                 spectatorLoc.setPitch(pitch);
                 this.spectatorSpawn = spectatorLoc;
             }
+            String ringCenterString = section.getString(mapName + ".ring-center-loc");
+            if (ringCenterString != null) {
+                String[] splitStr = ringCenterString.trim().split(":");
+                World world = Bukkit.getWorld(splitStr[0]);
+                double x = Double.parseDouble(splitStr[1]);
+                double y = Double.parseDouble(splitStr[2]);
+                double z = Double.parseDouble(splitStr[3]);
+                float yaw = Float.parseFloat(splitStr[4]);
+                float pitch = Float.parseFloat(splitStr[5]);
+
+                Location ringLoc = new Location(world, x, y, z);
+                ringLoc.setYaw(yaw);
+                ringLoc.setPitch(pitch);
+                this.ringCenterLocation = ringLoc;
+            }
+
             loadedMaps.put(mapName, this);
 
         }
 
     }
 
+    public void replaceSignsAndSignPlatforms() {
+        for (Map.Entry<Location, DataPair<BlockData, BlockState>> block : blocksRemoved.entrySet()) {
+            Location location = block.getKey();
+            //location.getBlock().setType(block.getValue().getMaterial());
+            location.getBlock().setBlockData(block.getValue().getKey());
+            block.getValue().getValue().update(true);
+        }
+    }
+
+    public void removeSignsAndSignPlatforms() {
+        List<Block> blocks = new ArrayList<>();
+        blocks.add(spectatorSpawn.getBlock());
+        blocks.add(lobbyLocation.getBlock());
+        blocks.add(ringCenterLocation.getBlock());
+        blocks.add(playerSpawn.getBlock());
+
+        for (Block block : blocks) {
+            Sign sign = (Sign) block.getState();
+            org.bukkit.block.data.type.Sign signX = (org.bukkit.block.data.type.Sign) sign.getBlockData();
+
+            if (sign.getLine(0).equalsIgnoreCase("spectator_spawn")
+                    || sign.getLine(0).equalsIgnoreCase("player_spawn")
+                    || sign.getLine(0).equalsIgnoreCase("lobby_spawn")
+                    || sign.getLine(0).equalsIgnoreCase("ring_center")) {
+                blocksRemoved.put(sign.getLocation(), new DataPair<>(signX, block.getState()));
+                block.setType(Material.AIR);
+
+                if (block.getRelative(BlockFace.DOWN).getType() == Material.SPONGE) {
+                    blocksRemoved.put(block.getRelative(BlockFace.DOWN).getLocation(), new DataPair<>(block.getRelative(BlockFace.DOWN).getBlockData(), block.getRelative(BlockFace.DOWN).getState()));
+                    block.getRelative(BlockFace.DOWN).setType(Material.AIR);
+                }
+            }
+        }
+    }
+
+
     @Override
     public void delete() {
-
+        plugin.getFileUtil().getMapFile().getMapConfig().set("Maps." + gameType.name() + "." + mapName, null);
+        plugin.getFileUtil().getMapFile().save();
     }
 
 
@@ -201,6 +276,13 @@ public class BattleRoyaleMap implements GameMap {
 
     @Override
     public Map<LocationType, List<Location>> getLocationList() {
-        return null;
+        Map<LocationType, List<Location>> map = new HashMap<>();
+
+        map.put(LocationType.LOBBY, Collections.singletonList(lobbyLocation));
+        map.put(LocationType.PLAYER_SPAWN, Collections.singletonList(playerSpawn));
+        map.put(LocationType.SPECTATOR, Collections.singletonList(spectatorSpawn));
+        map.put(LocationType.RING, Collections.singletonList(ringCenterLocation));
+
+        return map;
     }
 }

@@ -1,6 +1,7 @@
 package com.aquaticlabsdev.elfgame.game;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.BattleRoyaleGame;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.BombTagGame;
 import com.aquaticlabsdev.elfroyal.game.ElfGame;
 
@@ -13,7 +14,8 @@ public class GameFactory {
 
     public static ElfGame createGame(ElfPlugin plugin, GameType type, String id) {
         switch (type) {
-            case SPLEEF:
+            case BATTLE_ROYALE:
+                return new BattleRoyaleGame(plugin, id);
             default:
                 return new BombTagGame(plugin, id);
         }

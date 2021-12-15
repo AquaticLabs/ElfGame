@@ -39,6 +39,10 @@ public class TemporaryBlankMap implements GameMap {
     }
 
     @Override
+    public void delete() {
+    }
+
+    @Override
     public Selection getMapBounds() {
         return null;
     }

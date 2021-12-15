@@ -2,6 +2,7 @@ package com.aquaticlabsdev.elfgame.setup.events;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
+import com.aquaticlabsdev.elfgame.util.Utils;
 import com.aquaticlabsdev.elfroyal.loc.Selection;
 import com.aquaticlabsdev.elfgame.util.DebugLogger;
 import com.aquaticlabsdev.elfgame.util.file.MessageFile;
@@ -49,7 +50,7 @@ public class WandBlockClick implements Listener {
             if (playerData.getLocation1() != null) {
                 Selection selection = new Selection(playerData.getLocation1(), playerData.getLocation2());
                 playerData.setSelection(selection);
-                player.sendMessage(messagesFile.getSetupWandRightClick().replace("%x%", e.getClickedBlock().getX() + "").replace("%y%", e.getClickedBlock().getY() + "").replace("%z%", e.getClickedBlock().getZ() + "") + " " + messagesFile.getSetupWandBlockAmount().replace("%blocks%", selection.blockCount() + ""));
+                player.sendMessage(messagesFile.getSetupWandRightClick().replace("%x%", e.getClickedBlock().getX() + "").replace("%y%", e.getClickedBlock().getY() + "").replace("%z%", e.getClickedBlock().getZ() + "") + " " + messagesFile.getSetupWandBlockAmount().replace("%blocks%", Utils.addCommas(selection.blockCount()) + ""));
                 return;
             }
             player.sendMessage(messagesFile.getSetupWandRightClick().replace("%x%", e.getClickedBlock().getX() + "").replace("%y%", e.getClickedBlock().getY() + "").replace("%z%", e.getClickedBlock().getZ() + ""));
@@ -66,7 +67,7 @@ public class WandBlockClick implements Listener {
             if (playerData.getLocation2() != null) {
                 Selection selection = new Selection(playerData.getLocation1(), playerData.getLocation2());
                 playerData.setSelection(selection);
-                player.sendMessage(messagesFile.getSetupWandLeftClick().replace("%x%", e.getClickedBlock().getX() + "").replace("%y%", e.getClickedBlock().getY() + "").replace("%z%", e.getClickedBlock().getZ() + "") + " " + messagesFile.getSetupWandBlockAmount().replace("%blocks%", selection.blockCount() + ""));
+                player.sendMessage(messagesFile.getSetupWandLeftClick().replace("%x%", e.getClickedBlock().getX() + "").replace("%y%", e.getClickedBlock().getY() + "").replace("%z%", e.getClickedBlock().getZ() + "") + " " + messagesFile.getSetupWandBlockAmount().replace("%blocks%", Utils.addCommas(selection.blockCount()) + ""));
                 return;
             }
             player.sendMessage(messagesFile.getSetupWandLeftClick().replace("%x%", e.getClickedBlock().getX() + "").replace("%y%", e.getClickedBlock().getY() + "").replace("%z%", e.getClickedBlock().getZ() + ""));
