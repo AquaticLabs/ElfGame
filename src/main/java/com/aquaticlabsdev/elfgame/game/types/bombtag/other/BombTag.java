@@ -42,34 +42,47 @@ public class BombTag {
 
     public void tagPlayer(UUID uuid) {
         if (taggedPlayer != null) {
-            cancel();
+            updateTag(uuid);
+            return;
         }
         taggedPlayer = uuid;
         start();
     }
 
     public void start() {
-        if (taskID != null) {
-            restart();
-            return;
-        }
-        Player player = Bukkit.getPlayer(taggedPlayer);
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
-        game.broadcastGameMessage(messageFile.getBombTagTaggedAnnounce().replace("%player_name%", player.getName()).replace("%prefix%", messageFile.getBombTagPrefix()));
-        player.sendMessage(messageFile.getBombTagTaggedPlayer().replace("%prefix%", messageFile.getBombTagPrefix()));
+        game.broadcastGameMessage(messageFile.getBombTagTaggedAnnounce().replace("%player_name%", Bukkit.getPlayer(taggedPlayer).getName()).replace("%prefix%", messageFile.getBombTagPrefix()));
+        Bukkit.getPlayer(taggedPlayer).sendMessage(messageFile.getBombTagTaggedPlayer().replace("%prefix%", messageFile.getBombTagPrefix()));
         this.taskID = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+
+
             if (time == 0) {
                 cancel();
+                Player player = Bukkit.getPlayer(taggedPlayer);
+                if (player == null) {
+                    cancel();
+                    return;
+                }
                 game.killPlayer(player);
                 return;
             }
             if (time % 10 == 0 && time > 4) {
+                Player player = Bukkit.getPlayer(taggedPlayer);
+                if (player == null) {
+                    cancel();
+                    return;
+                }
                 game.broadcastGameMessage(messageFile.getBombTagBombCountdown()
                         .replace("%seconds%", time + "")
                         .replace("%prefix%", messageFile.getBombTagPrefix())
                         .replace("%player_name%", player.getName()));
             }
             if (time <= 5) {
+                Player player = Bukkit.getPlayer(taggedPlayer);
+                if (player == null) {
+                    cancel();
+                    return;
+                }
                 game.broadcastGameMessage(messageFile.getBombTagBombCountdown()
                         .replace("%seconds%", time + "")
                         .replace("%prefix%", messageFile.getBombTagPrefix())
@@ -80,6 +93,13 @@ public class BombTag {
 
     }
 
+    public void updateTag(UUID uuid) {
+        this.taggedPlayer = uuid;
+        Player player = Bukkit.getPlayer(taggedPlayer);
+        MessageFile messageFile = plugin.getFileUtil().getMessageFile();
+        game.broadcastGameMessage(messageFile.getBombTagTaggedAnnounce().replace("%player_name%", player.getName()).replace("%prefix%", messageFile.getBombTagPrefix()));
+        player.sendMessage(messageFile.getBombTagTaggedPlayer().replace("%prefix%", messageFile.getBombTagPrefix()));
+    }
 
     public void restart() {
         if (taskID == null) {

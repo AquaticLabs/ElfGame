@@ -1,7 +1,6 @@
-package com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners;
+package com.aquaticlabsdev.elfgame.events;
 
 import com.aquaticlabsdev.elfgame.ElfPlugin;
-import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.game.GameHandler;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.BattleRoyaleGame;
 import com.aquaticlabsdev.elfroyal.game.GameState;
@@ -17,12 +16,12 @@ import org.bukkit.event.player.PlayerRespawnEvent;
  * On: 12/13/2021
  * At: 21:29
  */
-public class BRPlayerRespawn implements Listener {
+public class PlayerRespawn implements Listener {
 
     private final ElfPlugin plugin;
     private final GameHandler gameHandler;
 
-    public BRPlayerRespawn(ElfPlugin plugin, GameHandler gameHandler) {
+    public PlayerRespawn(ElfPlugin plugin, GameHandler gameHandler) {
         this.plugin = plugin;
         this.gameHandler = gameHandler;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -31,17 +30,15 @@ public class BRPlayerRespawn implements Listener {
 
     @EventHandler
     private void onRespawn(PlayerRespawnEvent event) {
-        if (!(gameHandler.getActiveGame() instanceof BattleRoyaleGame)) {
-            return;
+        if (gameHandler.getActiveGame() != null) {
+            if (gameHandler.getActiveGame().getState() == GameState.INGAME && gameHandler.getActiveGame().getState() == GameState.POSTGAME)
+                return;
         }
-        if (gameHandler.getActiveGame().getState() != GameState.INGAME && gameHandler.getActiveGame().getState() != GameState.POSTGAME)
-            return;
-        Player p = event.getPlayer();
-        BattleRoyaleGame game = (BattleRoyaleGame) gameHandler.getActiveGame();
 
+
+        Player p = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            p.setGameMode(GameMode.SPECTATOR);
-            p.teleport(game.getMap().getSpectatorSpawn());
+            p.teleport(plugin.getGameHandler().getMainLobbyLoc());
         }, 1L);
 
 

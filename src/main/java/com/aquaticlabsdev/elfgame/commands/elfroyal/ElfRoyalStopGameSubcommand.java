@@ -46,10 +46,10 @@ public class ElfRoyalStopGameSubcommand implements Subcommand {
             return true;
         }
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
-        if (plugin.getGameHandler().getActiveGame().type().equalsIgnoreCase(args[1].toUpperCase())) {
-            plugin.getGameHandler().getActiveGame().stop();
-        }
         GameType type = GameType.valueOf(plugin.getGameHandler().getActiveGame().type());
+        if (plugin.getGameHandler().getActiveGame().type().equalsIgnoreCase(args[1].toUpperCase())) {
+            plugin.getGameHandler().cancelActiveGame();
+        }
 
         player.sendMessage("You Stopped the current game. Type: " + type.name());
         return true;

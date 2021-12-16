@@ -1,2 +1,13 @@
 Animations:
   Title:
+    lobbytitle:
+      animationSpeed: 10
+      animation:
+        - "&8<-&co&8-> &3&lElf &4&lRoyale &8<-&co&8->"
+        - "&8<&co&8--> &3&lElf &4&lRoyale &8<--&co&8>"
+        - "&8<-&co&8-> &3&lElf &4&lRoyale &8<-&co&8->"
+        - "&8<--&ao&8> &3&lElf &4&lRoyale &8<&ao&8-->"
+        - "&8<-&ao&8-> &3&lElf &4&lRoyale &8<-&ao&8->"
+        - "&8<&ao&8--> &3&lElf &4&lRoyale &8<--&ao&8>"
+        - "&8<-&ao&8-> &3&lElf &4&lRoyale &8<-&ao&8->"
+        - "&8<--&co&8> &3&lElf &4&lRoyale &8<&co&8-->"

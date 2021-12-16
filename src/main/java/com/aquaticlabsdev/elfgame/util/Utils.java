@@ -129,6 +129,26 @@ public class Utils {
         return builder.toString();
     }
 
+    public static String formatSeconds2(int seconds) {
+        long millis = seconds * 1000L;
+
+        int sec = (int) (millis / 1000) % 60;
+        int min = (int) ((millis / (1000 * 60)) % 60);
+        int hours = (int) ((millis / (1000 * 60 * 60)) % 24);
+        int d = (int) TimeUnit.MILLISECONDS.toDays(millis);
+
+        StringBuilder builder = new StringBuilder();
+
+        if (d >= 1) {
+            return "> " + d + " days";
+        }
+        if (hours > 0) builder.append(hours).append(":");
+        if (min > 0) builder.append(min).append(":");
+        if (sec > 0) builder.append(sec);
+
+        return builder.toString();
+    }
+
     public static Integer randomNumber(int min, int max) {
         Random i = new Random();
         if (max == min) {

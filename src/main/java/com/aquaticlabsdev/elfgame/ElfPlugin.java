@@ -10,16 +10,20 @@ import com.aquaticlabsdev.elfgame.events.BlockPlace;
 import com.aquaticlabsdev.elfgame.events.PlayerDamage;
 import com.aquaticlabsdev.elfgame.events.PlayerJoin;
 import com.aquaticlabsdev.elfgame.events.PlayerQuit;
+import com.aquaticlabsdev.elfgame.events.PlayerRespawn;
 import com.aquaticlabsdev.elfgame.game.GameHandler;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDamage;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDamageByPlayer;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDeath;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerDrop;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerInteract;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerMove;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.listeners.BRPlayerRespawn;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BRRingTimer;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.listeners.BombTagEDEEvent;
 import com.aquaticlabsdev.elfgame.setup.events.WandBlockClick;
 import com.aquaticlabsdev.elfgame.util.DebugLogger;
+import com.aquaticlabsdev.elfgame.util.Leaderboard;
 import com.aquaticlabsdev.elfgame.util.file.FileUtil;
 import com.aquaticlabsdev.elfroyal.ElfRoyalPlugin;
 import lombok.Getter;
@@ -43,6 +47,9 @@ public final class ElfPlugin extends ElfRoyalPlugin {
     private PlayerDataHolder playerHolder;
 
     @Getter
+    private Leaderboard leaderboard;
+
+    @Getter
     private FileUtil fileUtil;
     @Getter
     private GameHandler gameHandler;
@@ -56,6 +63,7 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         this.gameHandler = new GameHandler(this);
         registerCommands();
         registerListeners();
+        this.leaderboard = new Leaderboard(this);
 
         if (!Bukkit.getOnlinePlayers().isEmpty()) {
             onReload();
@@ -74,6 +82,8 @@ public final class ElfPlugin extends ElfRoyalPlugin {
             playerData.setName(player.getName());
             playerData.save();
             gameHandler.addToGamePlayers(playerData);
+            playerData.getBoard().start();
+
         }
     }
 
@@ -148,6 +158,7 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         new BlockBreak(this);
         new BlockPlace(this);
         new PlayerDamage(this);
+        new PlayerRespawn(this, gameHandler);
 
         // BombTag
         new BombTagEDEEvent(this, gameHandler);
@@ -159,6 +170,8 @@ public final class ElfPlugin extends ElfRoyalPlugin {
         new BRPlayerMove(this, gameHandler);
         new BRPlayerDrop(this, gameHandler);
         new BRPlayerDamage(this, gameHandler);
+//        new BRPlayerRespawn(this, gameHandler);
+        new BRPlayerDamageByPlayer(this, gameHandler);
 
     }
 

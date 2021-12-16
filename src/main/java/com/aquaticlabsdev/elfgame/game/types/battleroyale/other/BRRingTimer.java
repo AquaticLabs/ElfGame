@@ -10,7 +10,9 @@ import com.aquaticlabsdev.elfroyal.timer.ObjectTimer;
 import com.aquaticlabsdev.elfroyal.timer.TimeTickType;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.WorldBorder;
+import org.bukkit.entity.Player;
 
 /**
  * @Author: extremesnow
@@ -83,6 +85,9 @@ public class BRRingTimer extends ObjectTimer {
     @Override
     public void whenComplete() {
         // Ring Starts Moving
+        for (Player player : game.getPlayersToPlay().values()) {
+            new BREffect(null, Sound.BLOCK_NOTE_BLOCK_HARP).play(player.getLocation());
+        }
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
         game.broadcastGameMessage(messageFile.getBattleRoyaleRingClosing()
                 .replace("%prefix%", messageFile.getBattleRoyalePrefix()));
@@ -92,7 +97,8 @@ public class BRRingTimer extends ObjectTimer {
             // Ring has fully Closed.
             border.setWarningDistance(5);
             DebugLogger.logDebugMessage("Ring Has Closed.");
-        }, borderSmallSize*2, TimeTickType.DOWN);
+        }, shrinkTime, TimeTickType.DOWN);
+        ringClosedTimer.start();
     }
 
     public void fixBorder() {

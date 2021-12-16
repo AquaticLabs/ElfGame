@@ -4,6 +4,7 @@ import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.game.ElfTimer;
 import com.aquaticlabsdev.elfgame.game.GameType;
+import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BREffect;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BRRingTimer;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BattleRoyaleMap;
 import com.aquaticlabsdev.elfgame.game.types.battleroyale.other.BattleRoyalePregameTimer;
@@ -18,12 +19,15 @@ import com.aquaticlabsdev.elfroyal.timer.TimeTickType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import xyz.xenondevs.particle.ParticleEffect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,8 +44,11 @@ public class BattleRoyaleGame extends ElfGame {
 
     private final ElfPlugin plugin;
 
+    @Getter
     private GameTimer preGameTimer;
+    @Getter
     private BRRingTimer ringTimer;
+    @Getter
     private GameTimer postGameTimer;
     private final GameType type = GameType.BATTLE_ROYALE;
     @Setter
@@ -59,6 +66,7 @@ public class BattleRoyaleGame extends ElfGame {
     @Getter
     private Map<Location, BlockData> chestsToReplace = new HashMap<>();
 
+    @Getter
     private List<UUID> alivePlayers = new ArrayList<>();
 
     public BattleRoyaleGame(ElfPlugin plugin, String id) {
@@ -164,8 +172,16 @@ public class BattleRoyaleGame extends ElfGame {
         if (postGameTimer != null)
             postGameTimer.stop();
 
-        //todo return all players gamemodes to survival and teleport them to server lobby
+        shutdown();
+    }
 
+
+    public void shutdown() {
+        for (Map.Entry<UUID, PlayerData> entry : plugin.getGameHandler().getAvailablePlayersToPlay().entrySet()) {
+            Player p = Bukkit.getPlayer(entry.getKey());
+            PlayerData data = plugin.getPlayerData(p);
+            data.setCurrentGame(null);
+        }
     }
 
     @Override
@@ -186,10 +202,19 @@ public class BattleRoyaleGame extends ElfGame {
                     .replace("%1st%", player1)
                     .replace("%2nd%", player2)
                     .replace("%3rd%", player3)
-
-
             );
         }
+
+        postGameTimer = new ElfTimer(plugin, () -> {
+            for (Player player : getPlayersToPlay().values()) {
+                player.getInventory().clear();
+                player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                player.setFoodLevel(20);
+            }
+            plugin.getGameHandler().teleportToLobbyLocation(getPlayersToPlay());
+            stop();
+        }, 15, TimeTickType.DOWN, false);
+        postGameTimer.start();
     }
 
     @Override
@@ -207,9 +232,14 @@ public class BattleRoyaleGame extends ElfGame {
     }
 
     public void killPlayer(Player victim, Player killer) {
+        new BREffect(ParticleEffect.WHITE_ASH, Sound.ENTITY_EXPERIENCE_ORB_PICKUP).play(victim.getLocation());
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
         placements.addPlacement(victim.getUniqueId(), alivePlayers.size());
         alivePlayers.remove(victim.getUniqueId());
+
+        victim.setGameMode(GameMode.SPECTATOR);
+        victim.teleport(map.getSpectatorSpawn());
+
         if (killer != null) {
             broadcastGameMessage(messageFile.getBattleRoyaleKill()
                     .replace("%killer_name%", killer.getName())

@@ -4,6 +4,7 @@ import com.aquaticlabsdev.elfgame.ElfPlugin;
 import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.game.ElfTimer;
 import com.aquaticlabsdev.elfgame.game.GameType;
+import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BTEffect;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTag;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagMap;
 import com.aquaticlabsdev.elfgame.game.types.bombtag.other.BombTagPregameTimer;
@@ -17,7 +18,11 @@ import com.aquaticlabsdev.elfroyal.timer.TimeTickType;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import xyz.xenondevs.particle.ParticleEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +38,9 @@ import java.util.UUID;
 public class BombTagGame extends ElfGame {
 
     private final ElfPlugin plugin;
+    @Getter
     private GameTimer preGameTimer;
+    @Getter
     private GameTimer postGameTimer;
     private final GameType type = GameType.BOMB_TAG;
     @Setter
@@ -43,6 +50,7 @@ public class BombTagGame extends ElfGame {
     @Getter
     private GamePlacements placements = new GamePlacements();
 
+    @Getter
     private List<UUID> alivePlayers = new ArrayList<>();
 
 
@@ -65,6 +73,10 @@ public class BombTagGame extends ElfGame {
             if (!p.isOnline()) {
                 return;
             }
+            p.getInventory().clear();
+            p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+            p.setFoodLevel(20);
+
             getPlayersToPlay().putIfAbsent(entry.getKey(), p);
         }
 
@@ -91,7 +103,7 @@ public class BombTagGame extends ElfGame {
         }, this, 10, TimeTickType.DOWN, false);
         preGameTimer.start();
 
-        System.out.println("Game: " + getGameID() + " Type: " + type.name()  + " starting in " + preGameTimer.getTime() + " seconds");
+        System.out.println("Game: " + getGameID() + " Type: " + type.name() + " starting in " + preGameTimer.getTime() + " seconds");
         alivePlayers.addAll(getPlayersToPlay().keySet());
     }
 
@@ -110,10 +122,21 @@ public class BombTagGame extends ElfGame {
 
     @Override
     public void stop() {
+        setState(GameState.ENDED);
         if (preGameTimer != null)
             preGameTimer.stop();
+        if (bombTag != null) {
+            bombTag.cancel();
+        }
+        shutdown();
     }
-
+    public void shutdown() {
+        for (Map.Entry<UUID, PlayerData> entry : plugin.getGameHandler().getAvailablePlayersToPlay().entrySet()) {
+            Player p = Bukkit.getPlayer(entry.getKey());
+            PlayerData data = plugin.getPlayerData(p);
+            data.setCurrentGame(null);
+        }
+    }
     @Override
     public void finish() {
         setState(GameState.POSTGAME);
@@ -135,9 +158,18 @@ public class BombTagGame extends ElfGame {
 
             );
         }
+        awardWinners();
+
 
         postGameTimer = new ElfTimer(plugin, () -> {
+            for (Player player : getPlayersToPlay().values()) {
+                player.getInventory().clear();
+                player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                player.setFoodLevel(20);
+            }
             plugin.getGameHandler().teleportToLobbyLocation(getPlayersToPlay());
+            stop();
+
         }, 10, TimeTickType.DOWN, false);
         postGameTimer.start();
 
@@ -184,12 +216,14 @@ public class BombTagGame extends ElfGame {
     }
 
     public void killPlayer(Player player) {
+        new BTEffect(ParticleEffect.EXPLOSION_LARGE, Sound.ENTITY_GENERIC_EXPLODE).volume(0.5f).play(player.getLocation());
         MessageFile messageFile = plugin.getFileUtil().getMessageFile();
         placements.addPlacement(player.getUniqueId(), alivePlayers.size());
         player.sendMessage(messageFile.getBombTagBombPlayerDied().replace("%prefix%", messageFile.getBombTagPrefix()).replace("%placement%", (alivePlayers.size()) + ""));
         broadcastGameMessage(messageFile.getBombTagAnnounceBombExplode().replace("%player_name%", player.getName()));
         alivePlayers.remove(player.getUniqueId());
         player.teleport(map.getSpectatorSpawn());
+        player.setGameMode(GameMode.SPECTATOR);
         checkWinner();
 
     }
@@ -198,8 +232,28 @@ public class BombTagGame extends ElfGame {
         if (alivePlayers.size() <= 1) {
             placements.addPlacement(alivePlayers.get(0), 1);
             finish();
+            return;
         }
         pickRandomPlayerToBeTagged();
+    }
+
+    public void awardWinners() {
+        UUID uuid1 = getPlacements().getByPlacement(1);
+        UUID uuid2 = getPlacements().getByPlacement(2);
+        UUID uuid3 = getPlacements().getByPlacement(3);
+        PlayerData playerData1 = null;
+        PlayerData playerData2 = null;
+        PlayerData playerData3 = null;
+        try {
+            playerData1 = plugin.getPlayerHolder().getOrNull(uuid1);
+            playerData2 = plugin.getPlayerHolder().getOrNull(uuid2);
+            playerData3 = plugin.getPlayerHolder().getOrNull(uuid3);
+        } catch (Exception e){}
+
+        if (playerData1 != null) playerData1.addCookies(3);
+        if (playerData2 != null) playerData2.addCookies(2);
+        if (playerData3 != null) playerData3.addCookies(1);
+        plugin.getLeaderboard().build();
     }
 
 }

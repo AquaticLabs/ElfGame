@@ -28,7 +28,7 @@ public class PlayerQuit implements Listener {
     private void quitEvent(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerData data = plugin.getPlayerData(player);
-
+        data.getBoard().remove();
         if (data.getCurrentGame() != null) {
             ElfGame game = data.getCurrentGame();
 
@@ -36,7 +36,6 @@ public class PlayerQuit implements Listener {
                 game.getPlayersToPlay().remove(data.getUuid());
                 data.setCurrentGame(null);
             }
-
         }
 
     }

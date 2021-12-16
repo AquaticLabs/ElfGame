@@ -5,6 +5,8 @@ import com.aquaticlabsdev.elfgame.data.PlayerData;
 import com.aquaticlabsdev.elfgame.scoreboard.valuetypes.AnimatedTitle;
 import com.aquaticlabsdev.elfgame.scoreboard.valuetypes.AnimationManager;
 import com.aquaticlabsdev.elfgame.util.DebugLogger;
+import com.aquaticlabsdev.elfroyal.game.ElfGame;
+import com.aquaticlabsdev.elfroyal.game.GameState;
 import fr.mrmicky.fastboard.FastBoard;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +17,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -187,42 +191,53 @@ public class Board {
     }
 
     private List<String> getScoreboardForPlayer(Player player) {
-        String worldName = player.getWorld().getName();
-        String defaultBoard = "lobby-board";
-        ConfigurationSection scoreboardSection = plugin.getFileUtil().getScoreboardFile().getScoreboardSection();
+        String defaultBoard = "LOBBY";
+        ConfigurationSection configurationSection = plugin.getFileUtil().getScoreboardFile().getScoreboardSection();
+        PlayerData data = plugin.getPlayerData(player);
 
-        if (scoreboardSection.getKeys(false).contains(worldName.toLowerCase())) {
-            return scoreboardSection.getStringList(worldName.toLowerCase() + ".layout");
+        if (data.getCurrentGame() == null) {
+            return configurationSection.getStringList(defaultBoard + ".board");
         }
 
-        if (scoreboardSection.get(defaultBoard + ".layout") == null && scoreboardSection.get("default.layout") == null) {
-            return getErrorScoreboard();
+        ElfGame game = data.getCurrentGame();
+        GameState state = game.getState();
+        ConfigurationSection boardSection = configurationSection.getConfigurationSection("Games." + game.type());
+
+        if (boardSection == null) {
+            return Collections.singletonList("&cError");
+        }
+        if (!boardSection.getKeys(false).contains(state.name())) {
+            return boardSection.getStringList("DEFAULT.board");
         }
 
-        if (scoreboardSection.get(defaultBoard + ".title") != null) {
-            return scoreboardSection.getStringList(defaultBoard + ".layout");
-        } else {
-            return scoreboardSection.getStringList("default.layout");
+        if (boardSection.getKeys(false).contains(state.name())) {
+            return boardSection.getStringList(state.name() + ".board");
         }
+        return Collections.singletonList("&cError");
     }
 
     private String getScoreboardTitleForPlayer(Player player) {
-        String defaultBoard = "lobby-board";
-        String worldName = player.getWorld().getName();
+        String defaultBoard = "LOBBY";
         ConfigurationSection configurationSection = plugin.getFileUtil().getScoreboardFile().getScoreboardSection();
+        PlayerData data = plugin.getPlayerData(player);
 
-
-        if (configurationSection.getKeys(false).contains(worldName.toLowerCase())) {
-            return configurationSection.getString(worldName.toLowerCase() + ".title");
+        if (data.getCurrentGame() == null) {
+            return configurationSection.getString(defaultBoard + ".title");
         }
-        if (configurationSection.get(defaultBoard + ".title") == null && configurationSection.get("default.title") == null) {
+        ElfGame game = data.getCurrentGame();
+        GameState state = game.getState();
+        ConfigurationSection boardSection = configurationSection.getConfigurationSection("Games." + game.type());
+        if (boardSection == null) {
             return "&cERROR";
         }
-        if (configurationSection.get(defaultBoard + ".title") != null) {
-            return configurationSection.getString(defaultBoard + ".title");
-        } else {
-            return configurationSection.getString("default.title");
+        if (!boardSection.getKeys(false).contains(state.name())) {
+            return boardSection.getString("DEFAULT.title");
         }
+
+        if (boardSection.getKeys(false).contains(state.name())) {
+            return boardSection.getString(state.name() + ".title");
+        }
+        return "&cERROR";
     }
 
     private List<String> getErrorScoreboard() {

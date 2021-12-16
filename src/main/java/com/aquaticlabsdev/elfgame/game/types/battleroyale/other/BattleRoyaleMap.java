@@ -243,8 +243,9 @@ public class BattleRoyaleMap implements GameMap {
         blocks.add(playerSpawn.getBlock());
 
         for (Block block : blocks) {
+            if (!(block.getBlockData() instanceof org.bukkit.block.data.type.Sign)) return;
             Sign sign = (Sign) block.getState();
-            org.bukkit.block.data.type.Sign signX = (org.bukkit.block.data.type.Sign) sign.getBlockData();
+            org.bukkit.block.data.type.Sign signX = (org.bukkit.block.data.type.Sign) block.getBlockData();
 
             if (sign.getLine(0).equalsIgnoreCase("spectator_spawn")
                     || sign.getLine(0).equalsIgnoreCase("player_spawn")

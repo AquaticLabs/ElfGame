@@ -27,6 +27,7 @@ public class PlayerJoin implements Listener {
         PlayerData playerData = plugin.getPlayerHolder().getOrInsert(player.getUniqueId());
         playerData.setName(player.getName());
         playerData.save();
+        playerData.startBoard();
         plugin.getGameHandler().addToGamePlayers(playerData);
 
         if (plugin.getGameHandler().getMainLobbyLoc() != null) {

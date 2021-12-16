@@ -1,1 +1,58 @@
 Scoreboards:
+  LOBBY:
+    title: "&f❄  &2&lElf &4&lRoyale  &f❄"
+    board:
+      - "&r"
+      - "&c&lRank"
+      - "&7%player-rank%"
+      - "&r &r"
+      - "&a&lCookies"
+      - "&f%cookies%"
+      - "&r&r&r"
+  Games:
+    BATTLE_ROYALE:
+      DEFAULT:
+        title: "&f❄  &2&lBattle &4&lRoyale  &f❄"
+        board:
+          - "&r"
+          - "&c&lGame Starting"
+          - "&f%start-time%"
+          - "&r &r"
+      INGAME:
+        title: "&f❄  &2&lBattle &4&lRoyale  &f❄"
+        board:
+          - "&r"
+          - "&c&lRing Closing"
+          - "&f%ring-time%%ring-close-in%"
+          - "&r &r"
+          - "&b&lPlayers Alive"
+          - "&f%amount% &7Players"
+          - "&r&r "
+          - "&a&lKills"
+          - "&f%kills%"
+          - "&r&r&r"
+      POSTGAME:
+        title: "&f❄  &2&lBattle &4&lRoyale  &f❄"
+        board:
+          - "&r"
+          - "&c&lGame Ended."
+          - "&f%ending-time%"
+          - "&r &r"
+    BOMB_TAG:
+      DEFAULT:
+        title: "&2&lBomb &4Tag"
+        board:
+          - "&r"
+          - "&c&lGame Starting"
+          - "&f%start-time%"
+          - "&r &r"
+      INGAME:
+        title: "&2&lBomb &4Tag"
+        board:
+          - "&r"
+          - "&c&lTime Till Explode"
+          - "&f%bomb-time%"
+          - "&r &r"
+          - "&b&lPlayers Alive"
+          - "&f%amount% &7Players"
+          - "&r&r&r"

@@ -8,6 +8,7 @@ import com.aquaticlabsdev.elfroyal.game.GameState;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -50,16 +51,17 @@ public class GameHandler {
 
     public void cancelActiveGame() {
         if (activeGame != null) {
-            if (activeGame.getState() != GameState.ENDED) {
-                activeGame.stop();
-            }
+            activeGame.stop();
         }
+        activeGame = null;
     }
 
     public void teleportToLobbyLocation(Map<UUID, Player> map) {
 
         for (Player player : map.values()) {
             player.teleport(mainLobbyLoc);
+            player.setGameMode(GameMode.SURVIVAL);
+
         }
     }
 
@@ -82,21 +84,35 @@ public class GameHandler {
         spectators.putIfAbsent(data.getUuid(), data);
     }
 
+    public String getRank(PlayerData playerData) {
+        if (availablePlayersToPlay.containsKey(playerData.getUuid())) {
+            return "Elf";
+        }
+        if (spectators.containsKey(playerData.getUuid())) {
+            return "Spectator";
+        }
+        if (admins.containsKey(playerData.getUuid())) {
+            return "Admin";
+        }
+        return "";
+    }
+
     public void setMainLobbyLoc(Location location) {
         ConfigFile file = plugin.getFileUtil().getConfigFile();
+        this.mainLobbyLoc = location;
         file.getConfig().set("Settings.mainLobbyLocation",
-                location.getWorld().getName()
-                        + ":" + location.getX()
-                        + ":" + location.getY()
-                        + ":" + location.getZ()
-                        + ":" + location.getYaw()
-                        + ":" + location.getPitch());
+                mainLobbyLoc.getWorld().getName()
+                        + ":" + mainLobbyLoc.getX()
+                        + ":" + mainLobbyLoc.getY()
+                        + ":" + mainLobbyLoc.getZ()
+                        + ":" + mainLobbyLoc.getYaw()
+                        + ":" + mainLobbyLoc.getPitch());
         file.save();
     }
 
     public void loadMainLobbyLoc() {
         ConfigFile file = plugin.getFileUtil().getConfigFile();
-        String lobbyLocStr = file.getConfig().getString("Settings.mainLobbyLocation");
+        String lobbyLocStr = file.getMainLobbyLocation();
         if (lobbyLocStr != null) {
             String[] splitStr = lobbyLocStr.trim().split(":");
             World world = Bukkit.getWorld(splitStr[0]);
